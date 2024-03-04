@@ -14,4 +14,3 @@ def manage_menu():
     # For now, we'll just display a placeholder message
     print("Menu management functionality goes here.")
     # Placeholder for menu management functionality
-
