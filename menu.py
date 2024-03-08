@@ -12,7 +12,7 @@ def display_menu():
         message="Select an action:",
         choices=[
             "View Reservations",
-            "Manage Menu",
+            "Edit Menu",
             "Process Payments",
             Choice(value=None, name="Exit"),
         ],
@@ -24,4 +24,6 @@ def display_menu():
         process()
 # Function to handle the "Manage Menu" option
 def manage_menu():
-    print("\n--- Manage Menu ---")
+    print("--------------------------------------------------------------")
+    print('                        \033[4mEdit Menu\033[0m')
+    print("--------------------------------------------------------------")
