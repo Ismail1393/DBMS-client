@@ -1,23 +1,31 @@
+import os
+from InquirerPy import inquirer
+from InquirerPy.validator import PasswordValidator
 # login.py
+
+valid_username = "user123"
+valid_password = "pass123"
+
 def login():
-    print('\033[41mWelcome to the Restaurant Management Interface\033[0m')
+    print("--------------------------------------------------------------")
+    print('        \033[4mWelcome to the Restaurant Management Interface\033[0m')
+    print("--------------------------------------------------------------")
 
     # Get username and password
-    username = input("Enter your username: ")
-    password = input("Enter your password (getpass disabled for this environment): ")  # Modified line
+    username = inquirer.secret(
+        message="Enter Username:",
+        validate=lambda text: text == valid_username,
+        invalid_message="Wrong Username",
+       long_instruction="Username is user123",
+    ).execute()
 
-    # Simulate authentication (replace this with your actual authentication logic)
-    if authenticate(username, password):
-        print("Login successful. Welcome, {}!".format(username))
-        # Call your main function or perform other tasks after successful login
-        return True
-    else:
-        print("Login failed. Exiting program.")
-        return False
+    password = inquirer.secret(
 
-def authenticate(username, password):
-    # Replace this with your actual authentication logic
-    valid_username = "user123"
-    valid_password = "pass123"
-    
-    return username == valid_username and password == valid_password
+        message="Enter password:",
+        validate=lambda text: text == valid_password,
+        invalid_message="Wrong password",
+        long_instruction="Original password: pass123",
+    ).execute()
+    confirm = inquirer.confirm(message="Confirm?", default=True).execute()
+    os.system('cls')
+    return True

@@ -1,6 +1,6 @@
-BillsID,OrderID,Payment,Status,Date,Time
-1,1,20,Paid,3/8/2023,10:00 AM
-2,2,20,Pending,3/9/2023,11:00 AM
-3,3,20,Paid,3/10/2023,12:00 PM
-4,4,20,Pending,3/11/2023,1:00 PM
-5,5,20,Paid,3/12/2023,2:00 PM
+BillsID,OrderID,Payment,Status,DateTime,
+1,1,20,Paid,2024-04-23 15:30:00,
+2,2,20,Pending,2024-04-23 15:30:00,
+3,3,20,Paid,2024-04-23 15:30:00,
+4,4,20,Pending,2024-04-23 15:30:00,
+5,5,20,Paid,2024-04-23 15:30:00,
