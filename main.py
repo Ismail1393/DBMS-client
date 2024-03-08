@@ -1,6 +1,8 @@
 # main.py
 from login_file import login
 from menu import display_menu, manage_menu
+from processing_payments import process
+from dbconnect import create_connection
 
 def main():
     if login():
@@ -9,13 +11,13 @@ def main():
             choice = input()
 
             if choice == '1':
-                print("Viewing Reservations...")
+                print('\033[3mViewing Reservations\033[0m')
                 # Placeholder for actual functionality
             elif choice == '2':
                 manage_menu()
             elif choice == '3':
-                print("Processing Payments...")
-                # Placeholder for actual functionality
+                process()
+
             else:
                 print("Invalid option. Please try again.")
                 continue

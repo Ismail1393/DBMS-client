@@ -1,6 +1,6 @@
 # login.py
 def login():
-    print("Welcome to the CLI Login Interface")
+    print('\033[41mWelcome to the Restaurant Management Interface\033[0m')
 
     # Get username and password
     username = input("Enter your username: ")
