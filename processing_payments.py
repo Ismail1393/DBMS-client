@@ -1,7 +1,10 @@
 from dbconnect import create_connection
 
 def process():
-    print("\033[4mProcessing Payments\033[0m")
+    print("--------------------------------------------------------------")
+    print('                        \033[4mProcessing Payments\033[0m')
+    print("--------------------------------------------------------------")
+
     conn = create_connection()  
     if conn is not None:
         try:

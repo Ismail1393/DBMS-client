@@ -1,14 +1,13 @@
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
+from processing_payments import process
+import os
 # Function to display manager menu
 def display_menu():
     print("--------------------------------------------------------------")
     print('                        \033[4mManagers DashBoard\033[0m')
     print("--------------------------------------------------------------")
-    # print("1. View Reservations")
-    # print("2. Manage Menu")
-    # print("3. Process Payemnts")
-    # print("Please enter the number of the menu option you would like to access:")
+
     action = inquirer.select(
         message="Select an action:",
         choices=[
@@ -19,6 +18,10 @@ def display_menu():
         ],
         default=None,
     ).execute()
+    os.system('cls')
+
+    if action == 'Process Payments':
+        process()
 # Function to handle the "Manage Menu" option
 def manage_menu():
     print("\n--- Manage Menu ---")
