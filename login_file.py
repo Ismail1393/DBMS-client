@@ -7,8 +7,8 @@ from mysql.connector import errors
 
 # login.py
 
-valid_username = "user123"
-valid_password = "pass123"
+# valid_username = "user123"
+# valid_password = "pass123"
 
 def loginmenu():
     print("--------------------------------------------------------------")
@@ -26,30 +26,58 @@ def loginmenu():
     os.system('cls')
 
     if action == "Login":
-        login()
+        return login()
     elif action == "Signup":
-        signup()
+        return signup()
         
 
 def login():
     # Get username and password
-    username = inquirer.secret(
+    username = inquirer.text(
         message="Enter Username/Email:",
-        validate=lambda text: text == valid_username,
-        invalid_message="Wrong Username",
-       long_instruction="Username is user123",
+        validate=lambda text: len(text) > 0,
+        invalid_message="Username cannot be empty",
     ).execute()
 
-    password = inquirer.secret(
-
+    password = inquirer.text(
         message="Enter password:",
-        validate=lambda text: text == valid_password,
-        invalid_message="Wrong password",
-        long_instruction="Original password: pass123",
+        validate=lambda text: len(text) >= 8,
+        invalid_message="Password must be at least 8 characters long",
     ).execute()
+
     confirm = inquirer.confirm(message="Confirm?", default=True).execute()
+
+    #creating database connection
+    conn = create_connection()
+    if conn is not None:
+        try:
+            cursor = conn.cursor()
+            query = "SELECT * FROM users WHERE email = %s;"
+            cursor.execute(query, (username,))
+            user = cursor.fetchone()
+            if user is not None:
+                #checking hashed password
+                if bcrypt.checkpw(password.encode('utf-8'), user[5].encode('utf-8')):
+                    print("Login successful")
+                    cursor.close()
+                    conn.close()
+                    return True, username
+                else:
+                    print("Incorrect password")
+                    return False, None
+            else:
+                print("User not found")
+                return False, None
+        except errors.ProgrammingError as e:
+            print(f"Error: {e}")
+        finally:
+            cursor.close()
+            conn.close()
+    else:
+        print("Failed to connect to the database.")
+
     os.system('cls')
-    return True
+    return False, None
 
 def signup():
 
@@ -100,6 +128,6 @@ def signup():
     else:
         print("Failed to connect to the database.")
     
-    # os.system('cls')
-    return True
+    os.system('cls')
+    return False, None
     
