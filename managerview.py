@@ -24,9 +24,7 @@ def display_manager_dashboard():
     os.system('cls')
 
     # Handler for each action
-    if action == 'Process Payments':
-        process_payments()
-    elif action == 'View Reservations':
+    if action == 'View Reservations':
         view_reservations()
     elif action == 'Edit Menu':
         edit_menu()
@@ -35,27 +33,74 @@ def display_manager_dashboard():
     elif action == 'Manage Inventory':
         manage_inventory()
 
-def process_payments():
-    """Process payment transactions."""
-    print("Processing Payments...")
-    process()
 
 def view_reservations():
     """View current reservations."""
     print("Viewing Reservations...")
-    # Placeholder for functionality
+    conn = create_connection()
+    try:
+        query = "SELECT reservation_id, customer_name, reservation_time FROM Reservations WHERE reservation_time >= NOW()"
+        cursor = conn.cursor()
+        cursor.execute(query)
+        print("Reservations:")
+        for (reservation_id, customer_name, reservation_time) in cursor:
+            print(f"ID: {reservation_id}, Customer: {customer_name}, Time: {reservation_time}")
+    except mysql.connector.Error as err:
+        print("Error:", err)
+    finally:
+        cursor.close()
+        conn.close()
+
 
 def edit_menu():
     """Edit items in the menu."""
     print("Editing Menu...")
-    # Placeholder for functionality
+    conn = create_connection()
+    try:
+        item_name = input("Enter new menu item name: ")
+        item_price = float(input("Enter price for the new item: "))
+        query = "INSERT INTO MenuItems (name, price) VALUES (%s, %s)"
+        cursor = conn.cursor()
+        cursor.execute(query, (item_name, item_price))
+        conn.commit()
+        print("New menu item added.")
+    except mysql.connector.Error as err:
+        print("Error:", err)
+    finally:
+        cursor.close()
+        conn.close()
 
 def total_earnings():
     """Display total earnings."""
     print("Total Earnings...")
-    # Placeholder for functionality
+    conn = create_connection()
+    try:
+        query = "SELECT SUM(amount) AS TotalEarnings FROM Payments WHERE payment_date >= CURDATE()"
+        cursor = conn.cursor()
+        cursor.execute(query)
+        total = cursor.fetchone()
+        print("Total earnings today: $", total[0] if total[0] else 0)
+    except mysql.connector.Error as err:
+        print("Error:", err)
+    finally:
+        cursor.close()
+        conn.close()
+
 
 def manage_inventory():
     """Manage inventory items."""
     print("Managing Inventory...")
-    # Placeholder for functionality
+    conn = create_connection()
+    try:
+        query = "SELECT item_name, quantity FROM Inventory"
+        cursor = conn.cursor()
+        cursor.execute(query)
+        print("Current Inventory:")
+        for (item_name, quantity) in cursor:
+            print(f"Item: {item_name}, Quantity: {quantity}")
+    except mysql.connector.Error as err:
+        print("Error:", err)
+    finally:
+        cursor.close()
+        conn.close()
+
