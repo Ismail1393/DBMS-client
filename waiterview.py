@@ -41,7 +41,7 @@ def view_menu():
     """View the current menu items."""
     print("Viewing Menu...")
     # Placeholder for functionality
-
+s
 def view_availability():
     """Check table or resource availability."""
     print("Viewing Availability...")
