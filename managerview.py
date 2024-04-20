@@ -146,20 +146,58 @@ def edit_menu():
     
 
 def total_earnings():
-    """Display total earnings."""
-    print("Total Earnings...")
+    """Display total earnings and calculate net profit."""
+    print("Total Earnings and Net Profit Calculation...")
     conn = create_connection()
+    if not conn:
+        print("Failed to connect to database.")
+        return
+
     try:
-        query = "SELECT SUM(amount) AS TotalEarnings FROM Payments WHERE payment_date >= CURDATE()"
         cursor = conn.cursor()
-        cursor.execute(query)
-        total = cursor.fetchone()
-        print("Total earnings today: $", total[0] if total[0] else 0)
+
+        # Fetch total sales for the day
+        sales_query = "SELECT SUM(amount) AS TotalSales FROM Payments WHERE payment_date >= CURDATE()"
+        cursor.execute(sales_query)
+        sales_result = cursor.fetchone()
+        total_sales = sales_result[0] if sales_result and sales_result[0] is not None else 0.0
+
+        # Fetch total cost of dishes sold for the day
+        cost_query = """
+        SELECT SUM(oi.quantity * mi.cost) AS TotalCost
+        FROM OrderItems oi
+        JOIN MenuItems mi ON oi.item_id = mi.item_id
+        JOIN Orders o ON oi.order_id = o.order_id
+        WHERE o.order_time >= CURDATE()
+        """
+        cursor.execute(cost_query)
+        cost_result = cursor.fetchone()
+        total_cost = cost_result[0] if cost_result and cost_result[0] is not None else 0.0
+
+        # Fetch total salaries paid for the day
+        # Assuming you calculate salaries daily or have a mechanism to calculate it daily
+        salaries_query = "SELECT SUM(daily_wage) AS TotalSalaries FROM Employees"
+        cursor.execute(salaries_query)
+        salaries_result = cursor.fetchone()
+        total_salaries = salaries_result[0] if salaries_result and salaries_result[0] is not None else 0.0
+
+        # Calculate net profit
+        net_profit = total_sales - (total_cost + total_salaries)
+
+        # Print results
+        print(f"Total sales today: ${total_sales:.2f}")
+        print(f"Total cost of dishes sold today: ${total_cost:.2f}")
+        print(f"Total salaries paid today: ${total_salaries:.2f}")
+        print(f"Net profit today: ${net_profit:.2f}")
+
     except mysql.connector.Error as err:
         print("Error:", err)
     finally:
-        cursor.close()
-        conn.close()
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
 
 
 def manage_inventory():
