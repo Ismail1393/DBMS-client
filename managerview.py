@@ -146,45 +146,43 @@ def edit_menu():
     
 
 def total_earnings():
-    """Display total earnings and calculate net profit."""
+    """Display total earnings and calculate net profit for the day."""
     print("Total Earnings and Net Profit Calculation...")
     conn = create_connection()
     if not conn:
-        print("Failed to connect to database.")
+        print("Failed to connect to the database.")
         return
 
     try:
         cursor = conn.cursor()
 
-        # Fetch total sales for the day
-        sales_query = "SELECT SUM(amount) AS TotalSales FROM Payments WHERE payment_date >= CURDATE()"
+        # Calculate total sales for the day
+        sales_query = "SELECT SUM(amount) FROM Payments WHERE payment_date = CURDATE()"
         cursor.execute(sales_query)
-        sales_result = cursor.fetchone()
-        total_sales = sales_result[0] if sales_result and sales_result[0] is not None else 0.0
+        total_sales_result = cursor.fetchone()
+        total_sales = total_sales_result[0] if total_sales_result else 0.0
 
-        # Fetch total cost of dishes sold for the day
+        # Calculate total cost of dishes sold for the day
         cost_query = """
-        SELECT SUM(oi.quantity * mi.cost) AS TotalCost
-        FROM OrderItems oi
+        SELECT SUM(mi.cost * oi.quantity) FROM OrderItems oi
         JOIN MenuItems mi ON oi.item_id = mi.item_id
         JOIN Orders o ON oi.order_id = o.order_id
-        WHERE o.order_time >= CURDATE()
+        WHERE o.order_date = CURDATE()
         """
         cursor.execute(cost_query)
-        cost_result = cursor.fetchone()
-        total_cost = cost_result[0] if cost_result and cost_result[0] is not None else 0.0
+        total_cost_result = cursor.fetchone()
+        total_cost = total_cost_result[0] if total_cost_result else 0.0
 
-        # Fetch total salaries paid for the day
-        # Assuming you calculate salaries daily or have a mechanism to calculate it daily
-        salaries_query = "SELECT SUM(daily_wage) AS TotalSalaries FROM Employees"
+        # Calculate salaries paid for the day
+        salaries_query = "SELECT SUM(daily_wage) FROM Employees"
         cursor.execute(salaries_query)
-        salaries_result = cursor.fetchone()
-        total_salaries = salaries_result[0] if salaries_result and salaries_result[0] is not None else 0.0
+        total_salaries_result = cursor.fetchone()
+        total_salaries = total_salaries_result[0] if total_salaries_result else 0.0
 
         # Calculate net profit
         net_profit = total_sales - (total_cost + total_salaries)
 
-        # Print results
+        # Print the calculated values
         print(f"Total sales today: ${total_sales:.2f}")
         print(f"Total cost of dishes sold today: ${total_cost:.2f}")
         print(f"Total salaries paid today: ${total_salaries:.2f}")
@@ -197,6 +195,7 @@ def total_earnings():
             cursor.close()
         if conn:
             conn.close()
+
 
 
 
