@@ -4,8 +4,8 @@ from mysql.connector import Error
 database_name = 'dbmsproject'
 user = 'root'
 password = 'ismail'
+
 def create_connection():
-    
     try:
         conn = mysql.connector.connect(host='localhost', password=password, user=user, database=database_name)
         if conn.is_connected():

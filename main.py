@@ -22,10 +22,8 @@ def main():
                         cursor.execute(query, (user,))
                         permission = cursor.fetchone()
                         if permission[0] == 2:
-                            print("Manager Access Granted")
                             display_manager_dashboard()
                         elif permission[0] == 1:
-                            print("Waiter Access Granted")
                             display_waiter_dashboard()
                         else:
                             print("Invalid Permission Level")

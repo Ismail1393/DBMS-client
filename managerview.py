@@ -2,6 +2,7 @@ import os
 from InquirerPy import inquirer
 from InquirerPy.base.control import Choice
 from processing_payments import process
+from dbconnect import create_connection
 
 def display_manager_dashboard():
     """Display the manager's dashboard with menu options."""
@@ -38,8 +39,9 @@ def display_manager_dashboard():
 
 
 def view_reservations():
-    """View current reservations."""
-    print("Viewing Reservations...")
+    print("--------------------------------------------------------------")
+    print('                        \033[4mVeiwing Reservations\033[0m')
+    print("--------------------------------------------------------------")
     conn = create_connection()
     try:
         query = "SELECT reservation_id, customer_name, reservation_time FROM Reservations WHERE reservation_time >= NOW()"
@@ -57,7 +59,9 @@ def view_reservations():
 
 def edit_menu():
     """Edit items in the menu."""
-    print("Editing Menu...")
+    print("--------------------------------------------------------------")
+    print('                        \033[4mCurrent Menu Items\033[0m')
+    print("--------------------------------------------------------------")
     conn = create_connection()
     if conn is None:
         print("Failed to connect to database.")
@@ -67,28 +71,34 @@ def edit_menu():
         cursor = conn.cursor()
 
         # Display all current menu items
-        print("Current Menu Items:")
         cursor.execute("SELECT item_id, name, price, available FROM MenuItems")
         items = cursor.fetchall()
+        print('\n')
         for item in items:
             item_id, name, price, available = item
             availability_status = 'Yes' if available == 1 else 'No'
             print(f"ID: {item_id}, Name: {name}, Price: ${price:.2f}, Available: {availability_status}")
+        print('\n')
 
-        print("\nSelect the operation:")
-        print("1. Add New Menu Item")
-        print("2. Update Existing Menu Item")
-        print("3. Toggle Availability of a Menu Item")
-        operation = input("Enter your choice (1, 2, or 3): ")
+        operation = inquirer.select(
+            message="Select an operation:",
+            choices=[
+                "Add New Menu Item",
+                "Update Existing Menu Item", 
+                "Toggle Availability of a Menu Item",
+            ],
+            default=None,
+        ).execute()
 
-        if operation == '1':
+        if operation == 'Add New Menu Item':
             item_name = input("Enter new menu item name: ")
             item_price = float(input("Enter price for the new item: "))
             query = "INSERT INTO MenuItems (name, price, available) VALUES (%s, %s, 1)"
             cursor.execute(query, (item_name, item_price))
             print("New menu item added.")
+            os.system('cls')
 
-        elif operation == '2':
+        elif operation == 'Update Existing Menu Item':
             item_id = input("Enter the ID of the menu item to update: ")
             item_name = input("Enter new name for the menu item (leave blank to not change): ")
             item_price = input("Enter new price for the menu item (leave blank to not change): ")
@@ -110,15 +120,18 @@ def edit_menu():
                 print("Menu item updated.")
             else:
                 print("No changes made.")
+            os.system('cls')
 
-        elif operation == '3':
+        elif operation == 'Toggle Availability of a Menu Item':
             item_id = input("Enter the ID of the menu item to toggle availability: ")
             query = "UPDATE MenuItems SET available = CASE WHEN available = 1 THEN 0 ELSE 1 END WHERE item_id = %s"
             cursor.execute(query, (item_id,))
             print("Menu item availability toggled.")
+            os.system('cls')
 
         else:
             print("Invalid choice.")
+            os.system('cls')
 
         conn.commit()
 
@@ -130,7 +143,7 @@ def edit_menu():
         cursor.close()
         conn.close()
 
-
+    
 
 def total_earnings():
     """Display total earnings."""
